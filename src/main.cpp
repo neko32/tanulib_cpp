@@ -1,4 +1,5 @@
-#include "linkedhashmap.h"
+#include "tlib_collection/linkedhashmap.h"
+#include "tlib_py/python_runner.h"
 
 #include <iostream>
 using namespace std;
@@ -26,4 +27,7 @@ int main() {
     o.remove("pokori");
     cout << o.str() << endl;
     cout << o.size() << endl;
+
+    tlib::ProcessResult rez = tlib::exec_py("/home/neko32/dev/python/pystudy/main.py");
+    cout << rez.result.value() << endl;
 }

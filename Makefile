@@ -28,7 +28,7 @@ OUTPUT := output
 SRC := src
 
 # define include directory
-INCLUDE := include $(NEKOKAN_HEADER_DIR) 
+INCLUDE := include $(NEKOKAN_HEADER_DIR)
 
 LIB	:= lib $(NEKOKAN_LIB_DIR)
 
