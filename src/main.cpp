@@ -1,11 +1,14 @@
 #include "tlib_collection/linkedhashmap.h"
 #include "tlib_py/python_runner.h"
+#include "chatora/chatora.h"
 
 #include <iostream>
 using namespace std;
+using namespace tanu::chatora::ai;
 
 int main() {
 
+    /*
     tlib::LinkedHashMap<int, int> m;
     m.put(1, 32);
     m.put(5, 10);
@@ -30,4 +33,10 @@ int main() {
 
     tlib::ProcessResult rez = tlib::exec_py("/home/neko32/dev/python/pystudy/main.py");
     cout << rez.result.value() << endl;
+    */
+
+    OllamaChatora oc;
+    vector<LLMModel> models = oc.get_models();
+    for(const auto& model:models) cout << model.str() << endl;
+
 }
