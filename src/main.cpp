@@ -38,5 +38,8 @@ int main() {
     OllamaChatora oc;
     vector<LLMModel> models = oc.get_models();
     for(const auto& model:models) cout << model.str() << endl;
+    oc.attach("http://localhost", 11434);
+    auto rez = oc.talk_oneoff("ねこちゃんがねこじゃらしに飽きてしまいました。どうしたらよいでしょうか。", 0.1, 1000);
+    cout << rez << endl;
 
 }

@@ -4,10 +4,50 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <cpprest/http_client.h>
+#include <cpprest/filestream.h>
 
 using namespace tlib;
+using namespace web;
+using namespace web::http;
+using namespace web::http::client;
+using namespace concurrency::streams;
 
 namespace tanu::chatora::ai {
+
+    bool ChatoraBase::attach(const std::string& model_server_host, const int model_server_port) {
+        this->m_model_server_host = model_server_host;
+        this->m_model_server_port = model_server_port;
+
+        return true;
+    }
+
+    const std::string ChatoraBase::talk_oneoff(const std::string& prompt, double temperature, int max_tokens) {
+
+        if(this->m_model_server_host == std::nullopt) {
+            throw std::runtime_error("not yet connected to the model server!");
+        }
+
+        json::value post_req_body;
+        post_req_body["model"] = json::value::string("llama2");
+        post_req_body["prompt"] = json::value::string(prompt);
+        post_req_body["stream"] = json::value::boolean(false);
+        post_req_body["temperature"] = json::value::number(temperature);
+        post_req_body["max_tokens"] = json::value::number(max_tokens);
+
+        return pplx::create_task([&] {
+            http_client cl(std::format("{}:{}/api/generate", this->m_model_server_host.value(), this->m_model_server_port.value()));
+            return cl.request(methods::POST, "", post_req_body.serialize(), "application/json");
+        })
+        .then([](http_response resp) {
+            if(resp.status_code() == status_codes::OK) {
+                return resp.extract_json();
+            }
+        })
+        .then([](json::value js_resp) {
+            return js_resp["response"].as_string();
+        }).get();
+    }
 
     OllamaShowResponse OllamaChatora::show(const std::string& name) {
         OllamaShowResponse resp;

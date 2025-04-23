@@ -87,10 +87,14 @@ namespace tanu::chatora::ai {
     private:
         std::map<std::string, LLMModel> m_models;
         std::optional<std::string> m_active_model_name;
+        std::optional<std::string> m_model_server_host;
+        std::optional<int> m_model_server_port;
     public:
         ChatoraBase(){}
         virtual ~ChatoraBase(){}
         void add_model(LLMModel model){ this->m_models.insert({model.name() + ":" + model.version(), model});}
+        bool attach(const std::string& model_server_host, const int model_server_port);
+        const std::string talk_oneoff(const std::string& prompt, double temperature, int max_tokens);
         virtual std::vector<LLMModel> get_models() = 0;
         virtual const LLMModel get_active_model() = 0;
     };
