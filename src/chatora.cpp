@@ -85,6 +85,12 @@ namespace tanu::chatora::ai {
         return resp;
     }
 
+    bool OllamaChatora::attach(const std::string& model_server_host, const int model_server_port) {
+        ChatoraBase::attach(model_server_host, model_server_port);
+        ProcessResult pr = exec_cmd_unix("ollama serve &");
+        return pr.result_code == 0;
+    }
+
     std::vector<LLMModel> OllamaChatora::get_models() {
         std::vector<LLMModel> models{};
         ProcessResult out = exec_cmd_unix("ollama list|awk \"NR!=1{print $1}\"");
@@ -150,7 +156,19 @@ namespace tanu::chatora::ai {
         return ss.str();
     }
 
-    const LLMModel OllamaChatora::get_active_model() {
-        
+
+    bool OllamaChatora::activate_model(const std::string& model_name) {
+        ProcessResult pr = exec_cmd_unix(std::format("ollama run {}", model_name));
+        return pr.result_code == 0;
+    }
+
+    bool OllamaChatora::deactivate_model(const std::string& model_name) {
+        ProcessResult pr = exec_cmd_unix(std::format("ollama stop {}", model_name));
+        return pr.result_code == 0;
+    }
+
+    const std::vector<LLMModel> OllamaChatora::get_active_models() {
+        std::vector<LLMModel> actives{};
+        return actives;    
     }
 }

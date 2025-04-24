@@ -92,11 +92,13 @@ namespace tanu::chatora::ai {
     public:
         ChatoraBase(){}
         virtual ~ChatoraBase(){}
-        void add_model(LLMModel model){ this->m_models.insert({model.name() + ":" + model.version(), model});}
-        bool attach(const std::string& model_server_host, const int model_server_port);
-        const std::string talk_oneoff(const std::string& prompt, double temperature, int max_tokens);
+        virtual void add_model(LLMModel model){ this->m_models.insert({model.name() + ":" + model.version(), model});}
+        virtual bool attach(const std::string& model_server_host, const int model_server_port);
+        virtual const std::string talk_oneoff(const std::string& prompt, double temperature, int max_tokens);
+        virtual bool activate_model(const std::string& model_name) = 0;
+        virtual bool deactivate_model(const std::string& model_name) = 0;
         virtual std::vector<LLMModel> get_models() = 0;
-        virtual const LLMModel get_active_model() = 0;
+        virtual const std::vector<LLMModel> get_active_models() = 0;
     };
 
     struct OllamaShowResponse {
@@ -116,7 +118,10 @@ namespace tanu::chatora::ai {
     public:
         OllamaChatora(): ChatoraBase(){}
         std::vector<LLMModel> get_models() override;
-        const LLMModel get_active_model() override;
+        const std::vector<LLMModel> get_active_models() override;
+        bool attach(const std::string& model_server_host, const int model_server_port) override;
+        virtual bool activate_model(const std::string& model_name) override;
+        virtual bool deactivate_model(const std::string& model_name) override;
     };
 
 }
